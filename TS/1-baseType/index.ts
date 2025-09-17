@@ -99,7 +99,7 @@ getTuple(1, 1)
 function myNumberFilter(arr: Array<number>, callback: (item: number, index?: number) => boolean) {
     const result = []
     for (let i = 0; i < arr.length; i++) {
-        const item = arr[i]
+        const item = arr[i] as number
         if (callback(item, i)) {
             result.push(item)
         }
@@ -112,7 +112,7 @@ console.log("res1", res1)
 function myFilter<T>(arr: Array<T>, callback: (item: T, index?: number) => boolean) {
     const result = []
     for (let i = 0; i < arr.length; i++) {
-        const item = arr[i]
+        const item = arr[i] as T
         if (callback(item, i)) {
             result.push(item)
         }
@@ -270,5 +270,114 @@ const book: Book = {
     // }
 }
 
+// 交叉类型
+// 交叉类型是将多个类型合并为一个类型
+// 类型A & 类型B
+type A = {
+    id: number,
+    name: string
+}
 
+type B = {
+    age: number
+}
 
+type A1 = {
+    sex: "男" | "女",
+    type?: "Admin" | "Vip" | "Client"
+}
+
+type C = A & B & A1
+type D = A | B
+type E = string | number | boolean
+type F = string & number & boolean // never
+
+const obj5: C = {
+    id: 1,
+    name: "jack",
+    age: 18,
+    sex: "男"
+}
+
+const obj6: D = {
+    id: 1,
+    name: "jack",
+    // age: 18
+    // birthdate: "2002-02-20" // 报错
+}
+
+// 类型断言
+// TS 会根据上下文进行推断，但是有时候我们可以人为干预，确定某一个类型
+// 类型断言就是告诉 TS 编译器，我知道我在做什么，这里没有类型安全问题
+// 允许我们使用更宽松的方式处理类型问题
+// 语法： 1、 值 as 类型 2、<类型>值
+let someValue: any = "this is a string";
+// 推荐使用 as 的语法糖，因为 react 中的 jsx 语法和 <类型>值 的方式会产生歧义
+let strLen = (someValue as string).length;
+let strLen2 = <string>someValue.length;
+
+// 非空断言
+// 当你确认某个值不是 null 或 undefined 的时候，可以直接使用非空断言
+// 语法：值!
+let maybeString: string | undefined = "hello"
+let strLen3 = maybeString!.length
+
+function getRandom(length?: number) {
+    if (!length || length <= 0) {
+        return undefined
+    }
+    return Math.random().toString(36).slice(-length)
+}
+let str2: string | undefined = getRandom(6);
+(str2 as string).charAt(0)
+const ss = str2!.charAt(0)
+console.log("str2:", str2)
+
+type Box = {
+    id: number,
+    name: string
+}
+
+function getBox(): Box | undefined {
+    if (Math.random() > 0.5) {
+        return {
+            id: 1,
+            name: "jack"
+        }
+    }
+    return undefined
+}
+
+function createProduction(box: Box) {
+
+}
+
+// createProduction(getBox()) // 报错
+createProduction(getBox() as Box)
+createProduction(getBox()!)
+
+// const inputDom = document.querySelector("input");
+// inputDom!.addEventListener("change", (e) => {
+//     console.log("value:", (e.target as HTMLInputElement).value)
+// })
+
+// 可选链操作符 ES2020 node14+
+// 语法：对象?.属性名
+interface Address {
+    city: string,
+    street?: string
+}
+
+interface Student {
+    name: string,
+    address?: Address
+}
+
+const student: Student = {
+    name: "jack",
+    address: {
+        city: "成都",
+        // street:"人民大街"
+    }
+}
+console.log("street:", student.address?.street)
