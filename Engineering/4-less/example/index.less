@@ -1,0 +1,52 @@
+@green: #008c8c;
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    color: @green;
+
+    li {
+        margin-left: 1em;
+
+        &:hover {
+            background-color: @green;
+            color: #ffffff;
+        }
+    }
+}
+
+// 混合（Mixins），不加()时，会编译出来
+.round(@radius: 2px) {
+    border-radius: @radius;
+}
+
+.box {
+    .round(5px)
+}
+
+.box2 {
+    .round(10px)
+}
+
+.box3 {
+    .round()
+}
+
+// 注释（Comments），单行注释只存在于 less 文件中，编译后被删除
+/* 一个块注释
+ * style comment! */
+@var: red;
+
+// 这一行被注释掉了！
+@var: white;
+
+.abs-center(@type: absolute) {
+    position: @type;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.box {
+    .abs-center();
+}
